@@ -130,3 +130,6 @@ dmypy.json
 
 # Dev settings
 converter/converter/settings/env.py
+
+#Pycharm
+.idea/
