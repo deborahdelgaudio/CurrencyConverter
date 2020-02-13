@@ -131,3 +131,6 @@ dmypy.json
 
 #Pycharm
 .idea/
+
+# app file
+/converter/rates.xml
