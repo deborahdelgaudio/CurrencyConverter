@@ -6,13 +6,13 @@ from .serializers import RequestConvertSerializer
 from ..models import ConversionRate
 
 
-def convert_amount(rate_src, rate_dest, amount, src_currency, dest_currency):
+def convert_amount(src_rate, dest_rate, amount, src_currency, dest_currency):
     if dest_currency != 'EUR' and src_currency != 'EUR':
-        converted_amount = (1 / rate_src) * amount * rate_dest
+        converted_amount = (1 / src_rate) * amount * dest_rate
     elif dest_currency != 'EUR' and src_currency == 'EUR':
-        converted_amount = amount * rate_dest
+        converted_amount = amount * dest_rate
     elif dest_currency == 'EUR' and src_currency != 'EUR':
-        converted_amount = (1 / rate_src) * amount
+        converted_amount = (1 / src_rate) * amount
     else:
         converted_amount = amount
     converted_amount = round(converted_amount, 4)
@@ -28,16 +28,18 @@ def get_conversion_api_view(request):
             src_currency = serializer.validated_data['src_currency'].upper()
             amount = serializer.validated_data['amount']
             date = serializer.validated_data.get('reference_date', None)
-            rate_dest = 1
-            rate_src = 1
+            dest_rate = 1
+            src_rate = 1
 
             if dest_currency != 'EUR':
-                conversion_rate_dest = ConversionRate.objects.filter(iso_currency=dest_currency).order_by(
-                    '-date').first()
                 if date:
-                    conversion_rate_dest = ConversionRate.objects.filter(date=date, iso_currency=dest_currency).first()
-                if conversion_rate_dest:
-                    rate_dest = conversion_rate_dest.rate
+                    dest_conversion_rate = ConversionRate.objects.filter(date=date, iso_currency=dest_currency).first()
+                else:
+                    dest_conversion_rate = ConversionRate.objects.filter(iso_currency=dest_currency).order_by(
+                        '-date'
+                    ).first()
+                if dest_conversion_rate:
+                    dest_rate = dest_conversion_rate.rate
                 else:
                     return Response(
                         {
@@ -48,11 +50,14 @@ def get_conversion_api_view(request):
                     )
 
             if src_currency != 'EUR':
-                conversion_rate_src = ConversionRate.objects.filter(iso_currency=src_currency).order_by('-date').first()
                 if date:
-                    conversion_rate_src = ConversionRate.objects.filter(date=date, iso_currency=src_currency).first()
-                if conversion_rate_src:
-                    rate_src = conversion_rate_src.rate
+                    src_conversion_rate = ConversionRate.objects.filter(date=date, iso_currency=src_currency).first()
+                else:
+                    src_conversion_rate = ConversionRate.objects.filter(iso_currency=src_currency).order_by(
+                        '-date'
+                    ).first()
+                if src_conversion_rate:
+                    src_rate = src_conversion_rate.rate
                 else:
                     return Response(
                         {
@@ -62,7 +67,7 @@ def get_conversion_api_view(request):
                         status=400
                     )
 
-            amount = convert_amount(rate_src, rate_dest, amount, src_currency, dest_currency)
+            amount = convert_amount(src_rate, dest_rate, amount, src_currency, dest_currency)
             return Response({'amount': amount, 'currency': dest_currency}, status=200)
 
         else:
@@ -75,17 +80,17 @@ def get_conversion_api_view(request):
             )
 
     iso_currencies = ConversionRate.objects.all().values('iso_currency')
-    currencies_available = set([currency['iso_currency'] for currency in iso_currencies])
+    currencies = set([currency['iso_currency'] for currency in iso_currencies])
 
     return Response(
         {
             'message': 'Provide a query string params to convert values',
             'query_parameters': {
-                'src_currency': 'currency code of the amount',
-                'dest_currency': 'currency code of destination',
-                'amount': 'number with 4 decimal maximum',
-                'reference_date': 'date YYY-MM-DD, if not specificated is the last available on the system'
+                'src_currency': 'currency code of the amount, required',
+                'dest_currency': 'currency code of destination, required',
+                'amount': 'number with 4 decimal maximum, required',
+                'reference_date': 'date YYY-MM-DD, if not specified is the last available on the system'
             },
-            'currencies_available': currencies_available
+            'currencies': currencies
         }, status=200
     )
