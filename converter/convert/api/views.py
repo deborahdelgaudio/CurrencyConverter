@@ -80,7 +80,8 @@ def get_conversion_api_view(request):
             )
 
     iso_currencies = ConversionRate.objects.all().values('iso_currency')
-    currencies = set([currency['iso_currency'] for currency in iso_currencies])
+    currencies = list(set([currency['iso_currency'] for currency in iso_currencies]))
+    currencies.append('EUR')
 
     return Response(
         {
