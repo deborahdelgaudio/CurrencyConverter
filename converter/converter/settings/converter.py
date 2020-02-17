@@ -2,3 +2,6 @@ import os
 
 # CONVERSION RATES FILE PATH
 RATES_PATH = os.path.curdir + '/rates.xml'
+
+# CURRENCY OF CONVERSION RATES
+DEFAULT_CURRENCY = 'EUR'
