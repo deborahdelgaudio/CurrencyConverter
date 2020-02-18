@@ -39,7 +39,7 @@ class CurrencyConverter(object):
         src_rate = self.get_conversion_rate(src, date)
         dest_rate = self.get_conversion_rate(dest, date)
 
-        validate_conversion_rates([(src, src_rate), (dest, dest_rate)], date=date)
+        validate_conversion_rates([(src, src_rate), (dest, dest_rate)], date)
 
         if dest != self.default_currency and src != self.default_currency:
             converted_amount = (1 / src_rate) * amount * dest_rate
