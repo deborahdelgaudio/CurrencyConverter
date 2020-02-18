@@ -1,7 +1,7 @@
 # CurrencyConverter
 Web API that offers endpoint `/convert`, to convert currencies using last 90 days conversion rates from [European Central Bank](https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml).
 The endpoint accepts GET requests with a query string, for more information perform a GET request to `/convert` without any parameter. 
-The data source provide conversion rates day by day, so a reference date it's not required for the conversion, the last conversion rate available will be used.
+The data source provides conversion rates day by day, so a reference date it's not required for the conversion, the last conversion rate available will be used.
 
 The application can be run into a docker container or locally installing dependencies from `requirments.txt`.
 
@@ -21,7 +21,7 @@ docker run -e PORT=9000 -p 8000:9000 -t container:tag
 This will perform all the actions written above, so and the end of the process we can use the endpoint on `http://0.0.0.0:8000/convert`
 ### Tests
 Tests are not included on the build process and can be performed by running container on interactive mode.
-Run container with interactive mode:
+Run container on interactive mode:
 ```
 docker run -e PORT=9000 -p 8000:9000 -ti container:tag /bin/bash
 ```
