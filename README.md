@@ -1,6 +1,6 @@
 # CurrencyConverter
 Web API that offers endpoint `/convert`, to convert currencies using last 90 days conversion rates from [European Central Bank](https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml).
-The endpoint accepts GET requests with a query string, for more information perform a GET request to '/convert' without any parameter. 
+The endpoint accepts GET requests with a query string, for more information perform a GET request to `/convert` without any parameter. 
 The data source provide conversion rates day by day, so a reference date it's not required for the conversion, the last conversion rate available will be used.
 
 The application can be run into a docker container or locally installing dependencies from `requirments.txt`.
@@ -72,4 +72,3 @@ This will delete conversion rates older than 100 days. For more information you 
 - [python virtualenvs and packages](https://docs.python.org/3/tutorial/venv.html)
 - [django](https://docs.djangoproject.com/en/3.0/)
 - [django-restframework](https://www.django-rest-framework.org/)
-- [European Central Bank](https://www.ecb.europa.eu/)
