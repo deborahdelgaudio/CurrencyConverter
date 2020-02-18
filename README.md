@@ -38,7 +38,7 @@ To run it locally you can installing dependencies using pip from `requirments.tx
 ```
 pip install -r requirements.txt
 ``` 
-Then you have to prepare the database through apply the migrations with:
+Then `cd converter/` and prepare the database through apply the migrations with:
 ```
 python manage.py migrate
 ```
