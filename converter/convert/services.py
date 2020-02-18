@@ -4,6 +4,14 @@ from django.conf import settings
 from .models import ConversionRate
 
 
+def validate_conversion_rates(conversion_params, date=None):
+    for currency, rate in conversion_params:
+        if not rate:
+            if date:
+                raise Exception(f"Cannot find conversion rate for {currency} in date {date}")
+            raise Exception(f"Cannot find conversion rate for currency: {currency}")
+
+
 class CurrencyConverter(object):
     """
         CurrencyConverter fetch conversion rate using parameters and convert the amount.
@@ -22,7 +30,7 @@ class CurrencyConverter(object):
         else:
             conversion_rate = ConversionRate.objects.filter(iso_currency=currency).order_by(
                 '-date'
-            ).first()
+            ).first() # the most recent
         if conversion_rate:
             return conversion_rate.rate
         return None
@@ -31,11 +39,7 @@ class CurrencyConverter(object):
         src_rate = self.get_conversion_rate(src, date)
         dest_rate = self.get_conversion_rate(dest, date)
 
-        if not src_rate:
-            raise Exception("Cannot find conversion rate for source currency: {}".format(src))
-
-        if not dest_rate:
-            raise Exception("Cannot find conversion rate for destination currency: {}".format(dest))
+        validate_conversion_rates([(src, src_rate), (dest, dest_rate)], date=date)
 
         if dest != self.default_currency and src != self.default_currency:
             converted_amount = (1 / src_rate) * amount * dest_rate

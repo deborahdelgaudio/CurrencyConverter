@@ -39,7 +39,8 @@ def get_conversion_api_view(request):
             return Response(
                 {
                     'amount': converted_amount,
-                    'currency': dest_currency},
+                    'currency': dest_currency
+                },
                 status=200
             )
 
