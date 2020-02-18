@@ -42,8 +42,9 @@ class Command(BaseCommand):
                     obj = ConversionRate(date=date, iso_currency=currency, rate=rate_value)
                     obj.save()
                     self.stdout.write(
-                        self.style.SUCCESS('ConversionRate "%s (%s)" created with success!' % (obj.iso_currency, obj.date)))
+                        self.style.SUCCESS('ConversionRate "%s (%s)" created with success!' % (obj.iso_currency, obj.date))
+                    )
 
         if clean_days:
-            deadline = timezone.datetime.date().today() - timezone.timedelta(days=clean_days)
+            deadline = timezone.datetime.today() - timezone.timedelta(days=clean_days)
             ConversionRate.objects.filter(date__lt=deadline).delete()
